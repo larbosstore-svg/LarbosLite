@@ -164,11 +164,13 @@ const todayISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezone
 const brl=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);
 const dateBR=s=>s?new Date(s+'T12:00:00').toLocaleDateString('pt-BR'):'—';
 const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const PRODUCTS=['Polos','Básicas 40.1','Egípcias Larbos','Básicas Fit Larbos','Calças Jeans','Calças Alfaiataria','Shorte Sarja','Manga Curta Botão Larbos','Manga Longa Botão','Óculos','Carteira','Cintos'];
+const PRODUCTS=['Polos','Básicas 40.1','Egípcias Larbos','Básicas Fit Larbos','Calças Jeans','Calças Alfaiataria','Shorte Sarja','Manga Curta Botão Larbos','Manga Longa Botão','Óculos','Carteira','Cintos','Bonés','Camisas Polos Italianas'];
 const STANDARD_SIZES=['P','M','G','GG','G1','G2','G3','Único / sem tamanho'];
 const PANT_SIZES=['38','40','42','44','46','48'];
+const CAP_SIZES=['Único'];
+const ITALIAN_POLO_SIZES=['P','M','G','GG'];
 const isPantsProduct=product=>product==='Calças Jeans'||product==='Calças Alfaiataria';
-const sizesForProduct=product=>isPantsProduct(product)?PANT_SIZES:STANDARD_SIZES;
+const sizesForProduct=product=>product==='Bonés'?CAP_SIZES:product==='Camisas Polos Italianas'?ITALIAN_POLO_SIZES:isPantsProduct(product)?PANT_SIZES:STANDARD_SIZES;
 const blankStockMap=()=>Object.fromEntries(PRODUCTS.map(product=>[product,0]));
 const defaultData=()=>({sales:[],stock:0,stockByCategory:blankStockMap(),unassignedStock:0,movements:[]});
 function normalizeData(x){const stockByCategory=blankStockMap(),rawMap=x.stockByCategory&&typeof x.stockByCategory==='object'?x.stockByCategory:null;for(const product of PRODUCTS){const n=Number(rawMap?.[product]);if(Number.isFinite(n))stockByCategory[product]=n}const categoryTotal=PRODUCTS.reduce((sum,p)=>sum+stockByCategory[p],0),total=Number.isFinite(Number(x.stock))?Number(x.stock):categoryTotal,unassigned=Number.isFinite(Number(x.unassignedStock))?Number(x.unassignedStock):(rawMap?total-categoryTotal:total);return{sales:x.sales,stock:categoryTotal+unassigned,stockByCategory,unassignedStock:unassigned,movements:Array.isArray(x.movements)?x.movements:[]}}
